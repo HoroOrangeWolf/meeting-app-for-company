@@ -14,7 +14,7 @@ export default function MeetingSetup({navigation}) {
 
     const [iTimerPicker, setIsTimePicker] = useState(false);
 
-    const {meeting, setMeeting} = useAddMeetingContext();
+    const {meeting, setMeeting, onFinishClick} = useAddMeetingContext();
 
     const onDatePick = (event, date) => {
         setIsDatePicker(false);
@@ -67,8 +67,8 @@ export default function MeetingSetup({navigation}) {
                 </Stack>
 
                 <Box>
-                    <Button style={button} onPress={()=>navigation.navigate('MeetingAlarm')}>
-                        <Text style={buttonText}>Next</Text>
+                    <Button style={button} onPress={()=>onFinishClick()}>
+                        <Text style={buttonText}>Add Meeting</Text>
                     </Button>
                 </Box>
 

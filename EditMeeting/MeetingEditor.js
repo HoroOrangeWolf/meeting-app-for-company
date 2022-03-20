@@ -17,12 +17,10 @@ export default function MeetingEditor({navigation, route}) {
 
     const [iTimerPicker, setIsTimePicker] = useState(false);
 
-    const [isAlarmPicker, setAlarmPicker] = useState(false);
-
 
     const {singleMeeting, onMeetingMody, onBack} = route.params;
 
-    const [meeting, setMeeting] = useState({...singleMeeting, alarmDate: new Date(singleMeeting.alarmDate), timeDate: new Date(singleMeeting.timeDate)});
+    const [meeting, setMeeting] = useState({...singleMeeting, timeDate: new Date(singleMeeting.timeDate)});
     
     const onDatePick = (event, date) => {
         setIsDatePicker(false);
@@ -45,17 +43,6 @@ export default function MeetingEditor({navigation, route}) {
         setModified(true);
     };
 
-    const onAlarmPick = (event, date) => {
-        setAlarmPicker(false);
-        
-        if(date === undefined)
-            return;
-
-        setMeeting({...meeting, alarm: date});
-        setModified(true);
-    };
-
-    
 
     return (
 
@@ -102,10 +89,6 @@ export default function MeetingEditor({navigation, route}) {
                                 <FormControl.Label style={label}>
                                     <Text style={labelText}>Pick Time</Text>
                                 </FormControl.Label>
-
-                                <Input  style={input} onPressIn={()=>setAlarmPicker(!isAlarmPicker)} editable={!isAlarmPicker} value={moment(meeting.alarmDate).format('HH:mm')} type="text"/>
-
-                                {isAlarmPicker && <RNDateTimePicker value={meeting.alarmDate} mode="time" onChange={onAlarmPick}/>}
 
                                 <Button style={button} onPress={()=>navigation.navigate('QRCodeGenerator', {value: meeting.id} )}>
                                     <Text style={buttonText}>Generate QR Code</Text>

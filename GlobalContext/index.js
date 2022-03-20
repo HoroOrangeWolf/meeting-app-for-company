@@ -2,12 +2,10 @@ import React, { useContext, useState } from 'react';
 
 import { StyleSheet } from 'react-native';
 
-import { initializeApp } from "firebase/app";
+import { initializeApp } from 'firebase/app';
 import { getAuth, createUserWithEmailAndPassword,signInWithEmailAndPassword, signOut } from "firebase/auth";
 import { getFirestore, collection, addDoc,deleteDoc, query, doc,getDocs, where, Query, getDoc, updateDoc } from "firebase/firestore";
 import { Dimensions } from 'react-native';
-import { isAdmin } from '@firebase/util';
-
 
 const firebaseConfig = {
   apiKey: "AIzaSyDM5mFLrS_XBpeYOtfm8cUQVQXI4GdmMV0",
@@ -36,14 +34,22 @@ export default function GlobalContext({children}) {
 
     const [meetingBuff, setMeetingBuff] = useState([]);
 
+    const [triggerUser, setTriggerUser] = useState(false);
+
 
 
     const triggerLoadData = () =>{
         setTrigger(!trigger);
     };
 
-    const registerUser = async (email, password) =>{
+    const triggerLoadUserData = () => {
+        setTriggerUser(!triggerUser);
+    }
+
+    const registerUser = async (email, password, name, surname) =>{
         const userc = await createUserWithEmailAndPassword(auth, email, password);
+
+        await addDoc(collection(database, 'users'), {email, name, surname});
 
         return userc;
     };
@@ -51,6 +57,12 @@ export default function GlobalContext({children}) {
     const loginUser = async (email, password) => {
         const userc = await signInWithEmailAndPassword(auth, email, password);
         const isAdmin = await getUserPerm(email);
+
+        try{
+            await getUsers();
+        }catch(exc){
+            console.log(exc);
+        }
         
         setUser({...userc, isAdmin});
         setLogged(true);
@@ -60,6 +72,26 @@ export default function GlobalContext({children}) {
         await signOut(auth);
         setUser({});
         setLogged(false);
+    }
+
+    const getUsers = async () => {
+        const users = await getDocs(collection(database, 'users'));
+
+        const ar = [];
+
+        users.forEach(user=>{
+            const {email, name, surname} = user.data();
+
+            ar.push({id: user.id, email, name, surname});
+        });
+
+        return ar;
+    }
+
+    const updateUser = async (user) => {
+        const {id, name, surname} = user;
+
+        await updateDoc(doc(database, "users", id), {name, surname});
     }
 
     const getUserPerm = async (email) => {
@@ -78,11 +110,10 @@ export default function GlobalContext({children}) {
     }
 
     const addMeetinng = async (meeting) => {
-        const {name, description, calendarDate, alarm} = meeting;
+        const {name, description, calendarDate} = meeting;
         const timeDate = calendarDate.getTime();
-        const alarmDate = alarm.getTime();
 
-        const docRef = await addDoc(collection(database, 'meeting'), {name, description, timeDate, alarmDate, userEmail: user.user.email });
+        const docRef = await addDoc(collection(database, 'meeting'), {name, description, timeDate, userEmail: user.user.email });
 
         return docRef;
     }
@@ -104,9 +135,9 @@ export default function GlobalContext({children}) {
     }
 
     const updateMeeting = async (meeting) => {
-        const {id, name, description, timeDate, alarmDate} = meeting;
+        const {id, name, description, timeDate} = meeting;
 
-        await updateDoc(doc(database, "meeting", id), {...meeting, timeDate: timeDate.getTime(), alarmDate: alarmDate.getTime()});
+        await updateDoc(doc(database, "meeting", id), {...meeting, timeDate: timeDate.getTime()});
      } 
 
     const removeMeeting = async (docId) => {
@@ -115,7 +146,27 @@ export default function GlobalContext({children}) {
     
     return (
         <AppProvider.Provider
-            value={{globalStyles, registerUser, loginUser, addMeetinng,isAdmin ,setUser, getMeetings, removeMeeting, getMeeting, meetingBuff, setMeetingBuff,updateMeeting,isLogged, logOut, triggerLoadData, trigger}}
+            value={{
+                globalStyles,
+                registerUser,
+                loginUser,
+                addMeetinng,
+                isAdmin,
+                setUser,
+                getMeetings,
+                removeMeeting,
+                getMeeting,
+                meetingBuff, 
+                setMeetingBuff,
+                updateMeeting,
+                isLogged,
+                logOut,
+                triggerLoadData,
+                getUsers,
+                triggerUser,
+                triggerLoadUserData,
+                updateUser,
+                trigger}}
         >
             {
                 children
