@@ -22,63 +22,6 @@ export default function Scanner() {
 
   const handleBarCodeScanned = ({ type, data }) => {
     setData(data);
-    Alert.alert(
-      "Czy chcesz dolaczyc do spotkania?",
-      "",
-      [
-        {
-          text: "Tak",
-          onPress: () => {
-            setLoading(true);
-            getMeeting(data)
-              .then(value => {
-                const {name, userEmail, description, alarmDate, timeDate} = value;
-                addMeetinng({name, userEmail, description, alarm: new Date(alarmDate),calendarDate: new Date(timeDate)})
-                  .then(()=>{
-                    setLoading(false);
-                    triggerLoadData();
-                    Alert.alert(
-                      "Udalo sie dolaczyc do spotkania!",
-                      "",
-                      [
-                        {
-                          text: "OK",
-                        }
-                      ]
-                    )
-                  })
-                  .catch(exc => {
-                    setLoading(false);
-                    Alert.alert(
-                      "Nie udalo sie dolaczyc do spotkania!",
-                      "Sprobuj ponownie!",
-                      [
-                        {
-                          text: "OK",
-                        }
-                      ]
-                    )
-                  })
-              })
-              .catch(exc => {
-                setLoading(false);
-                Alert.alert(
-                  "Nie udalo sie dolaczyc do spotkania!",
-                  "Sprobuj ponownie!",
-                  [
-                    {
-                      text: "OK",
-                    }
-                  ]
-                )
-              });
-          }
-        },
-        {
-          text: "Nie"
-        }
-      ]
-    );
     setScanned(true);
   };
 

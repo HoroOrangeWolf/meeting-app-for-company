@@ -86,10 +86,6 @@ export default function MeetingEditor({navigation, route}) {
 
                                 {iTimerPicker &&<RNDateTimePicker value={meeting.timeDate} mode="time" onChange={onTimePick}/>}
 
-                                <FormControl.Label style={label}>
-                                    <Text style={labelText}>Pick Time</Text>
-                                </FormControl.Label>
-
                                 <Button style={button} onPress={()=>navigation.navigate('QRCodeGenerator', {value: meeting.id} )}>
                                     <Text style={buttonText}>Generate QR Code</Text>
                                 </Button>

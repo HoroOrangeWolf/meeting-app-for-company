@@ -48,16 +48,16 @@ export default function HomeTab({navigation})  {
   
 
   const longPress = (item) => {
-    Alert.alert(
-                    "Usuwanie Spotkania",
-                    `Czy chcesz usunąć: ${item.name}?`,
-                    [
-                    { text: "Tak", onPress: ()=> deleteMeeting(item.id) }, {text: "Nie"}]);
+    // Alert.alert(
+    //                 "Usuwanie Spotkania",
+    //                 `Czy chcesz usunąć: ${item.name}?`,
+    //                 [
+    //                 { text: "Tak", onPress: ()=> deleteMeeting(item.id) }, {text: "Nie"}]);
   };
 
   const onPressItem = (item) => {
-    setItemModify(item);
-    setModifying(true);
+    // setItemModify(item);
+    // setModifying(true);
   };
 
   const onItemModification = async (modifiedItem) => {
