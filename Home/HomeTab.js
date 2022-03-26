@@ -7,6 +7,7 @@ import { Alert,SafeAreaView, ScrollView } from "react-native";
 import { useGlobalContext } from "../GlobalContext";
 import Pressable from "react-native/Libraries/Components/Pressable/Pressable";
 import List from "./List";
+import { isAdmin } from "@firebase/util";
 
 
 export default function HomeTab({navigation})  {
@@ -18,7 +19,7 @@ export default function HomeTab({navigation})  {
   const [itemToModify, setItemModify] = useState({});
   
 
-  const {getMeetings, removeMeeting, trigger, triggerLoadData, updateMeeting, setMeetingBuff} = useGlobalContext();
+  const {getMeetings, removeMeeting, trigger, triggerLoadData,leaveMeeting,updateMeeting, setMeetingBuff, isAdmin, isMeetingOwner} = useGlobalContext();
 
   useEffect(() => {
     setLoading(true);
@@ -29,10 +30,10 @@ export default function HomeTab({navigation})  {
       })
       .catch(exc=>{
         Alert.alert(
-                    "Error!",
-                    "Nie mozna pobrać spotkań.",
-                    [
-                    { text: "OK" }]);
+          "Error!",
+          "Nie mozna pobrać spotkań.",
+          [
+          { text: "OK" }]);
       }).finally(()=>{
         setLoading(false);
       });
@@ -43,21 +44,58 @@ export default function HomeTab({navigation})  {
     removeMeeting(itemId)
       .then(()=>{
         triggerLoadData();
+      })
+      .catch(()=>{
+        Alert.alert(
+          "Error!",
+          "Nie można usunąć spotkania.",
+          [
+            { text: "OK" }
+          ]);
+      }).finally(()=>{
+        setLoading(true);
+      });
+  }
+
+  const leaveMeetingInside = (itemId) => {
+    setLoading(true);
+    leaveMeeting(itemId)
+      .then(()=>{
+        triggerLoadData();
+      })
+      .catch(exc=>{
+        Alert.alert(
+          "Error!",
+          "Opuścić spotkania.",
+          [
+          { text: "OK" }]);
+      })
+      .finally(()=>{
+        setLoading(true);
       });
   }
   
 
   const longPress = (item) => {
-    // Alert.alert(
-    //                 "Usuwanie Spotkania",
-    //                 `Czy chcesz usunąć: ${item.name}?`,
-    //                 [
-    //                 { text: "Tak", onPress: ()=> deleteMeeting(item.id) }, {text: "Nie"}]);
+    
+    if(isMeetingOwner(item.id) && isAdmin()){
+      Alert.alert(
+        "Usuwanie Spotkania",
+        `Czy chcesz usunąć: ${item.name}?`,
+        [
+        { text: "Tak", onPress: ()=> deleteMeeting(item.id) }, {text: "Nie"}]);
+    }else{
+      Alert.alert(
+        "Opuszczanie spotkania",
+        `Czy chcesz opuścić spotkanie: ${item.name}?`,
+        [
+        { text: "Tak", onPress: ()=> leaveMeetingInside(item.id) }, {text: "Nie"}]);
+    }
   };
 
   const onPressItem = (item) => {
-    // setItemModify(item);
-    // setModifying(true);
+    setItemModify(item);
+    setModifying(true);
   };
 
   const onItemModification = async (modifiedItem) => {
@@ -71,15 +109,15 @@ export default function HomeTab({navigation})  {
         .catch((exc)=>{
           console.log(exc);
             Alert.alert(
-                    "Błąd",
-                    `Wystąpił błąd podczas modyfikowania spotkania`,
-                    [
-                    { text: "OK"}]);
+              "Błąd",
+              `Wystąpił błąd podczas modyfikowania spotkania`,
+              [
+              { text: "OK"}]);
+        })
+        .finally(()=>{
+          setLoading(false);
         });
-  
-
-
-  } 
+  };
 
   const onBack = () => {
     setModifying(false);
@@ -90,7 +128,7 @@ export default function HomeTab({navigation})  {
 
     isLoading ? <Center flex={1} px="3">
       <Spinner accessibilityLabel="Loading..." size="lg"/>
-    </Center>: isModifying ? <EditMeeting onMeetingMody={onItemModification} singleMeeting={itemToModify} onBack={onBack}/>: <Box
+    </Center>: isModifying ? <EditMeeting onMeetingMody={onItemModification} singleMeeting={itemToModify} onBack={onBack} isEditBlocked={!isAdmin()}/>: <Box
       w={{
         base: "100%",
         md: "25%",

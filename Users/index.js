@@ -11,12 +11,11 @@ import {
 
 import { MaterialIcons } from "@expo/vector-icons";
 import UserList from './UserList'
-import EditUser from './EditUser';
-
+import { Alert } from "react-native";
 
 export default function Users({navigation}){
     
-    const {getUsers, triggerUser,globalStyles: {button}} = useGlobalContext();
+    const {getUsers, triggerUser,globalStyles: {button}, blockUser, triggerLoadUserData} = useGlobalContext();
     const [users, setUsers] = useState([]);
     const [isLoading, setLoading] = useState(false);
     const [isModifying, setModifying] = useState(false);
@@ -47,10 +46,32 @@ export default function Users({navigation}){
             
     },[triggerUser]);
 
-    const onPressItem = (item) => {
-        setItemModify(item);
-        setModifying(true);
-    };
+    const block = (item) => {
+        setLoading(true);
+        blockUser(item, !item.isBlock)
+            .then(()=>{
+                triggerLoadUserData();
+            })
+            .catch(exc=>{
+                setLoading(false);
+                 Alert.alert(
+                    "Error!",
+                    "",
+                    [
+                    { text: "Ok" }
+                    ]);
+            });
+    }
+
+    const onLongPress = (item)=>{
+        Alert.alert(
+          `Czy chcesz ${item.isBlocked ? 'odblokować' : 'zablokować'} tego użytkownika?`,
+          `Email: ${item.email}`,
+          [
+          { text: "Tak", onPress: ()=>block(item) },
+          {text: "Nie"}
+        ]);
+    }
 
     const goBack = () => {
         setModifying(false);
@@ -60,7 +81,6 @@ export default function Users({navigation}){
     return (
         isLoading ? <Center flex={1} px="3">
       <Spinner accessibilityLabel="Loading..." size="lg"/>
-    </Center>: isModifying ? <EditUser data={itemModify} onClickBack={()=>goBack()}/> :
-        <UserList data={users} onPress={onPressItem}/>
+    </Center>: <UserList data={users} onLongPress={onLongPress}/>
     );
 }

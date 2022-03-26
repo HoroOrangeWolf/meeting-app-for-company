@@ -8,7 +8,7 @@ export default function Scanner() {
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
   const [data, setData] = useState('');
-  const {getMeeting, addMeetinng, triggerLoadData} = useGlobalContext();
+  const {getMeeting, addMeetinng, triggerLoadData, isJoinedMeeting, joinMeeting, isMeetingOwner} = useGlobalContext();
   const [isLoading, setLoading] = useState(false);
   
 
@@ -22,7 +22,64 @@ export default function Scanner() {
 
   const handleBarCodeScanned = ({ type, data }) => {
     setData(data);
+
+
     setScanned(true);
+    if(isJoinedMeeting())
+    {
+      Alert.alert(
+        "Nie można dołączyć do tego samego spotkania 2 razy!",
+        "",
+        [
+          {
+            text: "OK",
+          }
+        ]
+      );
+    }else{
+      setLoading(true);
+      Alert.alert(
+        "Czy chcesz dołączyć do spotkania!",
+        "",
+        [
+          {
+            text: "Tak",
+            onPress: () => {
+              joinMeeting(data)
+          .then(()=>{
+            triggerLoadData();
+            Alert.alert(
+              "Pomyślnie dołączono do spotkania",
+              "",
+              [
+                {
+                  text: "OK",
+                }
+              ]
+            );
+          })
+          .catch(exc=>{
+            Alert.alert(
+              "Error!",
+              "Nie udało się dołączyć do spotkania!"
+              [
+                {
+                  text: "OK",
+                }
+              ]
+            );
+          })
+          .finally(()=>{
+            setLoading(false);
+          });
+              }
+          },
+          {
+            text: "Nie"
+          }
+          ]
+      );
+    }
   };
 
   if (hasPermission === false) {

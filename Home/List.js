@@ -29,37 +29,35 @@ export default function List({data, longPress, onPress}) {
                 <HStack space={1} justifyContent="space-between">
 
                   <VStack>
-                    <Text
-                      _dark={{
-                        color: "warmGray.50",
-                      }}
-                      color="coolGray.800"
-                      bold
-                    >
-                      {`Nazwa spotkania: ${item.name}`}
-                    </Text>
+                      <Text
+                        _dark={{
+                          color: "warmGray.50",
+                        }}
+                        color="coolGray.800"
+                        bold
+                        >
+                        {`Nazwa spotkania: ${item.name}`}
+                      </Text>
 
-                    <Text
-                      color="coolGray.600"
-                      _dark={{
-                        color: "warmGray.200",
-                      }}
-                    >
-                      {`Opis: ${item.description}`}
-                    </Text>
+                      <Text
+                        color="coolGray.600"
+                        _dark={{
+                          color: "warmGray.200",
+                        }}
+                        >
+                        {`Opis: ${item.description}`}
+                      </Text>
+                      <Text
+                        fontSize="xs"
+                        _dark={{
+                          color: "warmGray.50",
+                        }}
+                        color="coolGray.800"
+                        alignSelf="flex-start"
+                        >
+                        {new Date(item.timeDate).toUTCString()}
+                      </Text>
                   </VStack>
-
-                  <Spacer />
-                  <Text
-                    fontSize="xs"
-                    _dark={{
-                      color: "warmGray.50",
-                    }}
-                    color="coolGray.800"
-                    alignSelf="flex-start"
-                  >
-                    {new Date(item.timeDate).toUTCString()}
-                  </Text>
                 </HStack>
               </Box>
           </Pressable>

@@ -6,6 +6,7 @@ import { initializeApp } from 'firebase/app';
 import { getAuth, createUserWithEmailAndPassword,signInWithEmailAndPassword, signOut } from "firebase/auth";
 import { getFirestore, collection, addDoc,deleteDoc, query, doc,getDocs, where, Query, getDoc, updateDoc } from "firebase/firestore";
 import { Dimensions } from 'react-native';
+import { async } from '@firebase/util';
 
 const firebaseConfig = {
   apiKey: "AIzaSyDM5mFLrS_XBpeYOtfm8cUQVQXI4GdmMV0",
@@ -36,8 +37,6 @@ export default function GlobalContext({children}) {
 
     const [triggerUser, setTriggerUser] = useState(false);
 
-
-
     const triggerLoadData = () =>{
         setTrigger(!trigger);
     };
@@ -49,22 +48,18 @@ export default function GlobalContext({children}) {
     const registerUser = async (email, password, name, surname) =>{
         const userc = await createUserWithEmailAndPassword(auth, email, password);
 
-        await addDoc(collection(database, 'users'), {email, name, surname});
+        await addDoc(collection(database, 'users'), {email, isBlock: false,isAdmin: false,meetings: [], name, surname});
 
         return userc;
     };
 
     const loginUser = async (email, password) => {
         const userc = await signInWithEmailAndPassword(auth, email, password);
-        const isAdmin = await getUserPerm(email);
-
-        try{
-            await getUsers();
-        }catch(exc){
-            console.log(exc);
-        }
+    
+        const user = await getUser(email);
         
-        setUser({...userc, isAdmin});
+        
+        setUser({...userc, external: user ,isAdmin});
         setLogged(true);
     }
 
@@ -80,33 +75,47 @@ export default function GlobalContext({children}) {
         const ar = [];
 
         users.forEach(user=>{
-            const {email, name, surname} = user.data();
-
-            ar.push({id: user.id, email, name, surname});
+            ar.push({id: user.id, ...user.data()});
         });
 
-        return ar;
+        return ar.filter(f=>f.email !== user.external.email);
     }
 
-    const updateUser = async (user) => {
-        const {id, name, surname} = user;
-
-        await updateDoc(doc(database, "users", id), {name, surname});
-    }
-
-    const getUserPerm = async (email) => {
-        const qu = query(collection(database, 'admins'), where('email', '==', email));
-
-        const snapshot = await getDocs(qu);
+    const getUser = async (email) => {
+        const q = query(collection(database, "users"), where("email", "==", email));
+        const user = await getDocs(q);
         const ar = [];
+        const data = user.forEach(da=>{
+            const singleData = {id: da.id, ...da.data()};
+            ar.push(singleData);
+        });
+        return ar[0];
+    }
 
-        snapshot.forEach(doc=>ar.push(doc.data()));
-
-        return ar.length > 0;
+    const updateUser = async () => {
+        await updateDoc(doc(database, "users", user.external.id), {...user.external});
     }
 
     const isAdmin = () => {
-        return user.isAdmin;
+        return user.external.isAdmin;
+    }
+
+    const joinMeeting = async (meetingId) => {
+        user.external.meetings.push(meetingId);
+        await updateUser();
+    }
+
+    const leaveMeeting = async (meetingId) => {
+        user.external.meetings = user.external.meetings.filter(f=>f !== meetingId);
+        await updateUser();
+    }
+
+    const isJoinedMeeting = (meetingId) => {
+        return user.external.meetings.find(f=>f.id === meetingId) !== undefined;
+    }
+
+    const isMeetingOwner = (meetingId) =>{
+        return meetingBuff.find(f => f.id === meetingId).email === user.external.email;
     }
 
     const addMeetinng = async (meeting) => {
@@ -115,22 +124,45 @@ export default function GlobalContext({children}) {
 
         const docRef = await addDoc(collection(database, 'meeting'), {name, description, timeDate, userEmail: user.user.email });
 
+        await updateUser();
+
         return docRef;
     }
+
+    const blockUser = async (user, isBlock) => {
+        await updateDoc(doc(database, "users", user.id), {...user, isBlock});
+    }
+
     const getMeeting = async (id) => {
         const buff = await getDoc(doc(database, "meeting", id));
         return {id: buff.id, ...buff.data()};
     }
+
     const getMeetings = async () =>{
 
-        const qu = query(collection(database, 'meeting'), where('userEmail', '==', user.user.email));
 
-        const snapshot = await getDocs(qu);
+        const arrayBuff = [];
+        const q = query(collection(database, "meeting"), where("id", "in", [...user.external.meetings, ""]));
+
+        const snapshot = await getDocs(q);
+        snapshot.forEach(f=>arrayBuff.push(f));
+
         
+        const found = user.external.meetings.filter(f=>arrayBuff.find(rec=>rec.id === f)!=undefined);
+
+        
+  
+        if(found.length != user.external.meetings.length){
+            user.external.meetings = found;
+            updateUser();
+        }
+
         const ar = [];
         
         snapshot.forEach(doc=>ar.push({id: doc.id,...doc.data()}));
+
         ar.sort((first, sec) => first.timeDate - sec.timeDate);
+
         return ar;
     }
 
@@ -141,7 +173,9 @@ export default function GlobalContext({children}) {
      } 
 
     const removeMeeting = async (docId) => {
+       user.external.meetings = user.external.meetings.filter(f=>f.id !== docId);
        await deleteDoc(doc(database, "meeting", docId));
+       await updateUser();
     }
     
     return (
@@ -166,6 +200,11 @@ export default function GlobalContext({children}) {
                 triggerUser,
                 triggerLoadUserData,
                 updateUser,
+                isJoinedMeeting,
+                isMeetingOwner,
+                joinMeeting,
+                leaveMeeting,
+                blockUser,
                 trigger}}
         >
             {

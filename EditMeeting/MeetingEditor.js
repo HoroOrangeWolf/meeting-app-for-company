@@ -18,7 +18,7 @@ export default function MeetingEditor({navigation, route}) {
     const [iTimerPicker, setIsTimePicker] = useState(false);
 
 
-    const {singleMeeting, onMeetingMody, onBack} = route.params;
+    const {singleMeeting, onMeetingMody, onBack, isEditBlocked} = route.params;
 
     const [meeting, setMeeting] = useState({...singleMeeting, timeDate: new Date(singleMeeting.timeDate)});
     
@@ -54,7 +54,10 @@ export default function MeetingEditor({navigation, route}) {
                                     <Text style={labelText}>Name</Text>
                                 </FormControl.Label>
 
-                                <Input style={input} value={meeting.name} onChangeText={val=>{
+                                <Input style={input} 
+                                value={meeting.name}
+                                isDisabled={isEditBlocked} 
+                                onChangeText={val=>{
                                     
                                     setMeeting({...meeting, name: val});
                                     setModified(true);
@@ -64,7 +67,11 @@ export default function MeetingEditor({navigation, route}) {
                                     <Text style={labelText}>Description</Text>
                                 </FormControl.Label>
 
-                                <TextArea style={{...textArea, height: 100}} value = {meeting.description}  onChangeText={val=>{
+                                <TextArea 
+                                style={{...textArea, height: 100}} 
+                                value = {meeting.description}  
+                                isDisabled={isEditBlocked} 
+                                onChangeText={val=>{
                                     
                                     setMeeting({...meeting, description: val});
                                     setModified(true);
@@ -74,7 +81,13 @@ export default function MeetingEditor({navigation, route}) {
                                     <Text style={labelText}>Pick Date</Text>
                                 </FormControl.Label>
 
-                                <Input  style={input} onPressIn={()=>setIsDatePicker(!isDatePicker)} editable={!isDatePicker} value={moment(meeting.timeDate).format('DD/MM/YYYY')} type="text"/>
+                                <Input  
+                                    style={input} 
+                                    onPressIn={()=>setIsDatePicker(!isDatePicker)} 
+                                    isDisabled={isEditBlocked} 
+                                    editable={!isDatePicker} 
+                                    value={moment(meeting.timeDate).format('DD/MM/YYYY')} 
+                                    type="text"/>
 
                                 {isDatePicker && <RNDateTimePicker value={meeting.timeDate} mode="date" onChange={onDatePick}/>}
 
@@ -82,14 +95,20 @@ export default function MeetingEditor({navigation, route}) {
                                     <Text style={labelText}>Pick Hour</Text>
                                 </FormControl.Label>
 
-                                <Input style={input} onPressIn={()=>setIsTimePicker(!iTimerPicker)} editable={!iTimerPicker} value={moment(meeting.timeDate).format('HH:mm')} type="text"/>
+                                <Input 
+                                    style={input} 
+                                    onPressIn={()=>setIsTimePicker(!iTimerPicker)} 
+                                    editable={!iTimerPicker} 
+                                    value={moment(meeting.timeDate).format('HH:mm')}
+                                    isDisabled={isEditBlocked} 
+                                    type="text"/>
 
                                 {iTimerPicker &&<RNDateTimePicker value={meeting.timeDate} mode="time" onChange={onTimePick}/>}
 
                                 <Button style={button} onPress={()=>navigation.navigate('QRCodeGenerator', {value: meeting.id} )}>
                                     <Text style={buttonText}>Generate QR Code</Text>
                                 </Button>
-                                {isModified && <Button style={button} onPress={()=>onMeetingMody(meeting)}>
+                                {(isModified && !isEditBlocked) && <Button style={button} onPress={()=>onMeetingMody(meeting)}>
                                     <Text style={buttonText}>Save</Text>
                                 </Button>}
                                 

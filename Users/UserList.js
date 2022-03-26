@@ -4,7 +4,7 @@ import { Box,FlatList,HStack,VStack,Text,Spacer, Heading} from "native-base"
 
 import Pressable from "react-native/Libraries/Components/Pressable/Pressable";
 
-export default function UserList({data, onPress}) {
+export default function UserList({data, onLongPress}) {
   const getHeder = () => {
     return <Heading fontSize="xl" p="4" pb="3">
               Użytkownicy
@@ -15,7 +15,7 @@ export default function UserList({data, onPress}) {
         data={data}
         ListHeaderComponent={getHeder}
         renderItem={({ item }) => (
-          <Pressable onPress={()=>onPress(item)}>
+          <Pressable onLongPress = {()=>onLongPress(item)}>
                 <Box
                   borderBottomWidth="4"
                   _dark={{
@@ -54,6 +54,14 @@ export default function UserList({data, onPress}) {
                       }}
                     >
                       {`Nazwisko: ${item.surname}`}
+                    </Text>
+                    <Text
+                      color="coolGray.600"
+                      _dark={{
+                        color: "warmGray.200",
+                      }}
+                    >
+                      {`Czy konto użytkownika jest zablokowane? : ${item.isBlock ? 'Tak' : 'Nie'}`}
                     </Text>
                   </VStack>
 
