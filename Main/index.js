@@ -12,13 +12,7 @@ export default Main = () =>{
     const {registerUser, loginUser, isLogged} = useGlobalContext();
 
     const handleLogin = async (email, pass) => {
-        try{
-            
-            await loginUser(email, pass);
-
-        }catch(exc){
-            throw exc;
-        }    
+        await loginUser(email, pass);
     }
     
     return (

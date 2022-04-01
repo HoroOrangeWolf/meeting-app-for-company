@@ -65,7 +65,7 @@ export default function Users({navigation}){
 
     const onLongPress = (item)=>{
         Alert.alert(
-          `Czy chcesz ${item.isBlocked ? 'odblokować' : 'zablokować'} tego użytkownika?`,
+          `Czy chcesz ${item.isBlock ? 'odblokować' : 'zablokować'} tego użytkownika?`,
           `Email: ${item.email}`,
           [
           { text: "Tak", onPress: ()=>block(item) },

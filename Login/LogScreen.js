@@ -55,12 +55,22 @@ export default function LogScreen({navigation}) {
                                 setLogging(true);
                                 handleLogin(logInData.login, logInData.password)
                                     .catch(exc=>{
+                                        if(exc.message === 'User is blocked!'){
+                                            Alert.alert(
+                                                "Error!",
+                                                "Account is blocked!",
+                                                [
+                                                { text: "OK" }]);
+                                        }else{
                                             Alert.alert(
                                                 "Error!",
                                                 "Invalid email or password!",
                                                 [
                                                 { text: "OK" }]);
+                                        }
+
                                         setLogging(false);
+        
                                     });
                             }
                             }>

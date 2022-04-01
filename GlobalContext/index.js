@@ -57,10 +57,14 @@ export default function GlobalContext({children}) {
         const userc = await signInWithEmailAndPassword(auth, email, password);
     
         const user = await getUser(email);
-        
-        
+
         setUser({...userc, external: user ,isAdmin});
-        setLogged(true);
+
+        if(!user.isBlock){
+            setLogged(true);
+        }else{
+            throw new Error('User is blocked!');
+        }
     }
 
     const logOut = async () => {
