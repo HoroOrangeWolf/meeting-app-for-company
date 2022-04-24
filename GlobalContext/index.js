@@ -4,7 +4,7 @@ import { StyleSheet } from 'react-native';
 
 import { initializeApp } from 'firebase/app';
 import { getAuth, createUserWithEmailAndPassword,signInWithEmailAndPassword, signOut } from "firebase/auth";
-import { getFirestore, collection, addDoc,deleteDoc, query, doc,getDocs, where, Query, getDoc, updateDoc } from "firebase/firestore";
+import { getFirestore, collection, addDoc,deleteDoc, query, doc,getDocs, where, Query, getDoc, updateDoc, documentId } from "firebase/firestore";
 import { Dimensions } from 'react-native';
 import { async } from '@firebase/util';
 
@@ -69,7 +69,7 @@ export default function GlobalContext({children}) {
 
     const logOut = async () => {
         await signOut(auth);
-        setUser({});
+        setUser({id: -1, external: {isAdmin: false}});
         setLogged(false);
     }
 
@@ -93,10 +93,12 @@ export default function GlobalContext({children}) {
             const singleData = {id: da.id, ...da.data()};
             ar.push(singleData);
         });
+        
         return ar[0];
     }
 
     const updateUser = async () => {
+        console.log(user.external);
         await updateDoc(doc(database, "users", user.external.id), {...user.external});
     }
 
@@ -127,6 +129,10 @@ export default function GlobalContext({children}) {
         const timeDate = calendarDate.getTime();
 
         const docRef = await addDoc(collection(database, 'meeting'), {name, description, timeDate, userEmail: user.user.email });
+        
+        user.external.meetings = [...user.external.meetings, docRef.id];
+
+        console.log("AddMeeting", docRef.id);
 
         await updateUser();
 
@@ -146,12 +152,12 @@ export default function GlobalContext({children}) {
 
 
         const arrayBuff = [];
-        const q = query(collection(database, "meeting"), where("id", "in", [...user.external.meetings, ""]));
+        const q = query(collection(database, "meeting"), where(documentId(), "in", [...user.external.meetings]));
 
         const snapshot = await getDocs(q);
-        snapshot.forEach(f=>arrayBuff.push(f));
 
-        
+        snapshot.forEach(f=>arrayBuff.push(f));
+    
         const found = user.external.meetings.filter(f=>arrayBuff.find(rec=>rec.id === f)!=undefined);
 
         
@@ -167,6 +173,9 @@ export default function GlobalContext({children}) {
 
         ar.sort((first, sec) => first.timeDate - sec.timeDate);
 
+        
+
+    
         return ar;
     }
 
