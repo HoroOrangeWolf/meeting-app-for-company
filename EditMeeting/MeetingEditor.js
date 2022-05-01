@@ -51,7 +51,7 @@ export default function MeetingEditor({navigation, route}) {
                          <FormControl style={{width: "80%"}}>
                             <Stack space={2}>
                                 <FormControl.Label style={label}>
-                                    <Text style={labelText}>Name</Text>
+                                    <Text style={labelText}>Nazwa</Text>
                                 </FormControl.Label>
 
                                 <Input style={input} 
@@ -64,7 +64,7 @@ export default function MeetingEditor({navigation, route}) {
                                 }}/>
 
                                 <FormControl.Label>
-                                    <Text style={labelText}>Description</Text>
+                                    <Text style={labelText}>Opis</Text>
                                 </FormControl.Label>
 
                                 <TextArea 
@@ -78,7 +78,7 @@ export default function MeetingEditor({navigation, route}) {
                                 }}/>
 
                                 <FormControl.Label style={label}>
-                                    <Text style={labelText}>Pick Date</Text>
+                                    <Text style={labelText}>Wybierz date</Text>
                                 </FormControl.Label>
 
                                 <Input  
@@ -92,7 +92,7 @@ export default function MeetingEditor({navigation, route}) {
                                 {isDatePicker && <RNDateTimePicker value={meeting.timeDate} mode="date" onChange={onDatePick}/>}
 
                                 <FormControl.Label style={label}>
-                                    <Text style={labelText}>Pick Hour</Text>
+                                    <Text style={labelText}>Wybierz godzine</Text>
                                 </FormControl.Label>
 
                                 <Input 
@@ -106,15 +106,15 @@ export default function MeetingEditor({navigation, route}) {
                                 {iTimerPicker &&<RNDateTimePicker value={meeting.timeDate} mode="time" onChange={onTimePick}/>}
 
                                 <Button style={button} onPress={()=>navigation.navigate('QRCodeGenerator', {value: meeting.id} )}>
-                                    <Text style={buttonText}>Generate QR Code</Text>
+                                    <Text style={buttonText}>Wygeneruj kod QR</Text>
                                 </Button>
                                 {(isModified && !isEditBlocked) && <Button style={button} onPress={()=>onMeetingMody(meeting)}>
-                                    <Text style={buttonText}>Save</Text>
+                                    <Text style={buttonText}>Zapisz</Text>
                                 </Button>}
                                 
 
                                 <Button style={button} onPress={()=>onBack()}>
-                                    <Text style={buttonText}>Back</Text>
+                                    <Text style={buttonText}>Powrót</Text>
                                 </Button>
                                 
                             </Stack>

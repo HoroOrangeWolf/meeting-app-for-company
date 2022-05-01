@@ -60,25 +60,25 @@ export default function AddUser({navigation}){
                 <Stack space={2}>
 
                     <FormControl.Label style={label}>
-                        <Text style={labelText}>User Email</Text>
+                        <Text style={labelText}>Email użytkownika</Text>
                     </FormControl.Label>
 
                     <Input style={input} onChangeText={val=>setUser({...userData, email: val})}/>
 
                     <FormControl.Label>
-                        <Text style={labelText}>Password</Text>
+                        <Text style={labelText}>Hasło</Text>
                     </FormControl.Label>
 
                     <Input style={input} type="password" onChangeText={val=>setUser({...userData, password: val})}/>
 
                     <FormControl.Label>
-                        <Text style={labelText}>Name</Text>
+                        <Text style={labelText}>Imie</Text>
                     </FormControl.Label>
 
                     <Input style={input} onChangeText={val=>setUser({...userData, name: val})}/>
 
                     <FormControl.Label>
-                        <Text style={labelText}>Username</Text>
+                        <Text style={labelText}>Nazwa użytkownika</Text>
                     </FormControl.Label>
 
                     <Input style={input} onChangeText={val=>setUser({...userData, surname: val})}/>
@@ -86,7 +86,7 @@ export default function AddUser({navigation}){
 
                 <Box>
                     <Button style={button} onPress={()=>userAdd()}>
-                        <Text style={buttonText}>Add User</Text>
+                        <Text style={buttonText}>Dodaj użytkownika</Text>
                     </Button>
                 </Box>
 

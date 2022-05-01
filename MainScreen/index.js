@@ -20,7 +20,7 @@ const MainScreen = () => {
   return (
     
       <DrawerNav.Navigator initialRouteName="Home">
-        <DrawerNav.Screen name="Home" component={Home} />
+        <DrawerNav.Screen name="Home" component={Home} options={{headerTitle: 'Główna'}} />
         {isAdmin() && <DrawerNav.Screen name="Dodaj Spotkanie" component={AddMeeting} />}
         {isAdmin() && <DrawerNav.Screen name="User" component={Users} options={{headerTitle: 'Użytkownicy', title: 'Użytkownicy'}}/>}
         <DrawerNav.Screen name="Zeskanuj kod QR" component={Scanner} />

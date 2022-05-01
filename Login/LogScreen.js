@@ -43,7 +43,7 @@ export default function LogScreen({navigation}) {
                         <Input style={input} onChangeText={(value)=>setLogInData({...logInData, login: value})} type="text" InputLeftElement={<Icon style={{color: "gray"}} as={<MaterialIcons name="email"/>}/>}/>
                     
                     <FormControl.Label style={label}>
-                        <Text style={labelText}>Password</Text>
+                        <Text style={labelText}>Hasło</Text>
                     </FormControl.Label>
 
                     <Input style={input} onChangeText={(value)=>setLogInData({...logInData, password: value})} type="password" InputLeftElement={<Icon style={{color: "gray"}} as={<MaterialIcons name="lock"/>}/>}/>
@@ -58,13 +58,13 @@ export default function LogScreen({navigation}) {
                                         if(exc.message === 'User is blocked!'){
                                             Alert.alert(
                                                 "Error!",
-                                                "Account is blocked!",
+                                                "Konto jest zablokowane!",
                                                 [
                                                 { text: "OK" }]);
                                         }else{
                                             Alert.alert(
                                                 "Error!",
-                                                "Invalid email or password!",
+                                                "Email lub hasło niepoprawne!",
                                                 [
                                                 { text: "OK" }]);
                                         }

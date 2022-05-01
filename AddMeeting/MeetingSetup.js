@@ -41,14 +41,14 @@ export default function MeetingSetup({navigation}) {
         <Box style={meetingDetailsScreen}>
 
             <HStack style={{marginBottom: 50}}>
-                <Text style={{...fatText, fontSize: 40}}>Meeting Time</Text>
+                <Text style={{...fatText, fontSize: 40}}>Czas spotkania</Text>
             </HStack>
 
             <FormControl>
                 <Stack space={2}>
 
                     <FormControl.Label style={label}>
-                        <Text style={labelText}>Pick Date</Text>
+                        <Text style={labelText}>Wybierz Date</Text>
                     </FormControl.Label>
 
                     <Input  style={input} onPressIn={()=>setIsDatePicker(!isDatePicker)} editable={!isDatePicker} value={moment(meeting.calendarDate).format('DD/MM/YYYY')} type="text"/>
@@ -56,7 +56,7 @@ export default function MeetingSetup({navigation}) {
                     {isDatePicker && <RNDateTimePicker value={meeting.calendarDate} mode="date" onChange={onDatePick}/>}
 
                     <FormControl.Label style={label}>
-                        <Text style={labelText}>Pick Hour</Text>
+                        <Text style={labelText}>Wybierz Godzine</Text>
                     </FormControl.Label>
 
                     <Input style={input} onPressIn={()=>setIsTimePicker(!iTimerPicker)} editable={!iTimerPicker} value={moment(meeting.calendarDate).format('HH:mm')} type="text"/>
@@ -68,7 +68,7 @@ export default function MeetingSetup({navigation}) {
 
                 <Box>
                     <Button style={button} onPress={()=>onFinishClick()}>
-                        <Text style={buttonText}>Add Meeting</Text>
+                        <Text style={buttonText}>Dodaj Spotkanie</Text>
                     </Button>
                 </Box>
 

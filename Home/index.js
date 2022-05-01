@@ -49,9 +49,9 @@ export default function Home({navigation})  {
     initialRouteName="Home1"
     swipeEnabled={false}
     >
-      <TabNav.Screen name="Home1" component={HomeTab} options={{headerShown: false}}/>
-      <TabNav.Screen name="Calendar" component={CalendarTab} options={{headerShown: false}}/>
-      <TabNav.Screen name="Scanner" component={Scanner} options={{headerShown: false}}/>
+      <TabNav.Screen name="Home1" component={HomeTab} options={{headerShown: false, title: 'Główna'}}/>
+      <TabNav.Screen name="Calendar" component={CalendarTab} options={{headerShown: false, title: 'Kalendarz'}}/>
+      <TabNav.Screen name="Scanner" component={Scanner} options={{headerShown: false, title: 'Skaner QR'}}/>
     </TabNav.Navigator>
     
   )
