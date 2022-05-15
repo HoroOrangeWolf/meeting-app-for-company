@@ -9,9 +9,9 @@ import AddMeeting from '../AddMeeting';
 import { useGlobalContext } from '../GlobalContext';
 import Users from '../Users';
 import AddUser from '../Users/AddUser';
+import Help from '../Help';
 
 const DrawerNav = createDrawerNavigator();
-
 
 const MainScreen = () => {
 
@@ -23,6 +23,7 @@ const MainScreen = () => {
         <DrawerNav.Screen name="Home" component={Home} options={{headerTitle: 'Główna'}} />
         {isAdmin() && <DrawerNav.Screen name="Dodaj Spotkanie" component={AddMeeting} />}
         {isAdmin() && <DrawerNav.Screen name="User" component={Users} options={{headerTitle: 'Użytkownicy', title: 'Użytkownicy'}}/>}
+        <DrawerNav.Screen name="Pomoc" component={Help}/>
         <DrawerNav.Screen name="Zeskanuj kod QR" component={Scanner} />
         <DrawerNav.Screen name="Wyloguj" component={LogOut} />
         {isAdmin() && <DrawerNav.Screen name="addUsers" component={AddUser} options={{
