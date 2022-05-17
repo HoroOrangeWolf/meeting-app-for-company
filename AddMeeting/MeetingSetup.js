@@ -41,7 +41,7 @@ export default function MeetingSetup({navigation}) {
         <Box style={meetingDetailsScreen}>
 
             <HStack style={{marginBottom: 50}}>
-                <Text style={{...fatText, fontSize: 40}}>Czas spotkania</Text>
+                <Text style={{...fatText, fontSize: 37}}>Czas spotkania</Text>
             </HStack>
 
             <FormControl>
