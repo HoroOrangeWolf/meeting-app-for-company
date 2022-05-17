@@ -265,7 +265,7 @@ const globalStyles = StyleSheet.create({
     },
 
     fatText: {
-        fontSize: 0.089*Dimensions.get('window').width,
+        fontSize: 0.087*Dimensions.get('window').width,
         paddingTop: 40,
         fontWeight: "700",
         textAlign: "center",
