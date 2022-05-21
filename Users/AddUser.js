@@ -1,97 +1,130 @@
-import { Box, Button, FormControl, HStack, Input, Stack, Text, TextArea, Center, Spinner } from 'native-base';
-import React, {useState} from 'react'
-import { useGlobalContext } from '../GlobalContext';
-import { Alert } from 'react-native';
+import {
+  Box,
+  Button,
+  FormControl,
+  HStack,
+  Input,
+  Stack,
+  Text,
+  TextArea,
+  Center,
+  Spinner,
+} from "native-base";
+import React, { useState } from "react";
+import { useGlobalContext } from "../GlobalContext";
+import { Alert } from "react-native";
 
+export default function AddUser({ navigation }) {
+  const {
+    globalStyles: {
+      meetingDetailsScreen,
+      textArea,
+      fatText,
+      input,
+      label,
+      labelText,
+      button,
+      buttonText,
+    },
+    registerUser,
+    triggerLoadUserData,
+  } = useGlobalContext();
 
-export default function AddUser({navigation}){
+  const [isLoading, setLoading] = useState(false);
 
-    const {globalStyles: {meetingDetailsScreen, textArea, fatText, input, label, labelText, button, buttonText}, registerUser, triggerLoadUserData} = useGlobalContext();
+  const [userData, setUser] = useState({
+    email: "",
+    password: "",
+    name: "",
+    surname: "",
+  });
 
-    const [isLoading, setLoading] = useState(false);
+  const userAdd = () => {
+    setLoading(true);
 
-    const [userData, setUser] = useState({email: '', password: '', name: '', surname: ''});
+    registerUser(
+      userData.email,
+      userData.password,
+      userData.name,
+      userData.surname
+    )
+      .then(() => {
+        Alert.alert("Użytkownik został dodany pomyślnie!", "", [
+          {
+            text: "OK",
+          },
+        ]);
+      })
+      .catch((exc) => {
+        Alert.alert("Nie udało dodać się użytkownika!", "", [
+          {
+            text: "OK",
+          },
+        ]);
+      })
+      .finally(() => {
+        setLoading(false);
+        triggerLoadUserData();
+        navigation.navigate("User");
+      });
+  };
 
-    const userAdd = () => {
-        setLoading(true);
+  return isLoading ? (
+    <Center flex={1} px="3">
+      <Spinner accessibilityLabel="Loading..." size="lg" />
+    </Center>
+  ) : (
+    <Box style={meetingDetailsScreen}>
+      <HStack style={{ marginBottom: 50 }}>
+        <Text style={fatText}>Add user</Text>
+      </HStack>
 
-        registerUser(userData.email, userData.password, userData.name, userData.surname)
-            .then(()=>{
-                Alert.alert(
-                    "Użytkownik został dodany pomyślnie!",
-                    "",
-                    [
-                        {
-                        text: "OK",
-                        }
-                    ]
-                    );  
-            })
-            .catch(exc=>{
-                 Alert.alert(
-                    "Nie udało dodać się użytkownika!",
-                    "",
-                    [
-                        {
-                        text: "OK",
-                        }
-                    ]
-                    );  
-            })
-            .finally(()=>{
-                setLoading(false);
-                triggerLoadUserData();
-                navigation.navigate('User');
-            });
+      <FormControl>
+        <Stack space={2}>
+          <FormControl.Label style={label}>
+            <Text style={labelText}>Email użytkownika</Text>
+          </FormControl.Label>
 
-    }
+          <Input
+            style={input}
+            onChangeText={(val) => setUser({ ...userData, email: val })}
+          />
 
-    return (
-        isLoading ? <Center flex={1} px="3">
-      <Spinner accessibilityLabel="Loading..." size="lg"/>
-    </Center>:
-        <Box style={meetingDetailsScreen}>
+          <FormControl.Label>
+            <Text style={labelText}>Hasło</Text>
+          </FormControl.Label>
 
-            <HStack style={{marginBottom: 50}}>
-                <Text style={fatText}>Add user</Text>
-            </HStack>
+          <Input
+            style={input}
+            type="password"
+            onChangeText={(val) => setUser({ ...userData, password: val })}
+          />
 
-            <FormControl>
-                <Stack space={2}>
+          <FormControl.Label>
+            <Text style={labelText}>Imie</Text>
+          </FormControl.Label>
 
-                    <FormControl.Label style={label}>
-                        <Text style={labelText}>Email użytkownika</Text>
-                    </FormControl.Label>
+          <Input
+            style={input}
+            onChangeText={(val) => setUser({ ...userData, name: val })}
+          />
 
-                    <Input style={input} onChangeText={val=>setUser({...userData, email: val})}/>
+          <FormControl.Label>
+            <Text style={labelText}>Nazwa użytkownika</Text>
+          </FormControl.Label>
 
-                    <FormControl.Label>
-                        <Text style={labelText}>Hasło</Text>
-                    </FormControl.Label>
+          <Input
+            style={input}
+            onChangeText={(val) => setUser({ ...userData, surname: val })}
+          />
+        </Stack>
 
-                    <Input style={input} type="password" onChangeText={val=>setUser({...userData, password: val})}/>
-
-                    <FormControl.Label>
-                        <Text style={labelText}>Imie</Text>
-                    </FormControl.Label>
-
-                    <Input style={input} onChangeText={val=>setUser({...userData, name: val})}/>
-
-                    <FormControl.Label>
-                        <Text style={labelText}>Nazwa użytkownika</Text>
-                    </FormControl.Label>
-
-                    <Input style={input} onChangeText={val=>setUser({...userData, surname: val})}/>
-                </Stack>
-
-                <Box>
-                    <Button style={button} onPress={()=>userAdd()}>
-                        <Text style={buttonText}>Dodaj użytkownika</Text>
-                    </Button>
-                </Box>
-
-
-            </FormControl>
+        <Box>
+          <Button style={button} onPress={() => userAdd()}>
+            <Text style={buttonText}>Dodaj użytkownika</Text>
+          </Button>
         </Box>
-    );
+      </FormControl>
+    </Box>
+  );
 }
